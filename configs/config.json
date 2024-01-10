@@ -1,0 +1,19 @@
+{
+    "dev_mode": true,
+    "n_term_start": 3,
+    "filt": true,
+    "f_sreza": 0.7,
+    "f_sampling": 2000,
+    "plot_3D": true,
+    "plot_projections": true,
+    "QRS_loop_area": false,
+    "T_loop_area": false,
+    "count_qrst_angle": false,
+    "mean_filter": true,
+    "predict_res": true,
+    "show_ECG": false,
+    "logs": false,
+    "n_term_begin": 2,
+    "n_term_end": 9,
+    "logo": "configs/logo.png"
+}
