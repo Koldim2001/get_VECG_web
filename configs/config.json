@@ -13,7 +13,5 @@
     "predict_res": true,
     "show_ECG": false,
     "logs": false,
-    "n_term_begin": 2,
-    "n_term_end": 9,
     "logo": "configs/logo.png"
 }

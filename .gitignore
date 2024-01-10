@@ -1,0 +1,13 @@
+/test
+**/__pycache__/ 
+.ipynb_checkpoints
+/saved_vECG
+/get_vECG.egg-info
+/get_VECG.egg-info
+/ecg_database
+/utils/analysis.ipynb
+/Data_VECG
+main.spec
+/build
+main.exe
+main_old.exe
