@@ -6,6 +6,7 @@ import plotly.io as pio
 
 
 def main(config : dict):
+    st.set_page_config(layout="wide")
     st.title("Получение ВЭКГ")
     uploaded_file = st.sidebar.file_uploader("Выберите файл .edf", type="edf")
     if uploaded_file:

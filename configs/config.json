@@ -11,7 +11,7 @@
     "count_qrst_angle": false,
     "mean_filter": true,
     "predict_res": true,
-    "show_ECG": false,
+    "show_ECG": true,
     "logs": false,
     "window_web": "Одна страница" 
 }

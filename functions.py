@@ -70,6 +70,8 @@ def show_3d(x, y, z, single_window_web):
     fig.update_layout(title_text="3D представление ВЭКГ")
     if not single_window_web:
         fig.show()
+    else:
+        fig.update_layout(height=800)
     return fig
 
 
