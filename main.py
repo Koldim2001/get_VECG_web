@@ -11,7 +11,7 @@ def main(config : dict):
     if uploaded_file:
         st.write(f"Выбран файл: {uploaded_file.name}")
 
-    n_term_start = st.sidebar.number_input("Номер периода ЭКГ", value=config['n_term_start'], min_value=1,)
+    n_term_start = st.sidebar.number_input("Номер периода ЭКГ", value=config['n_term_start'], min_value=1)
     button_pressed = st.sidebar.button(":red[Запуск]", key="launch_button",
                                        help="Нажмите, чтобы начать обработку данных", use_container_width=True)
     
@@ -31,8 +31,8 @@ def main(config : dict):
     mean_filter = st.sidebar.checkbox("Сглаживание петель", value=config['mean_filter'])
     filt = st.sidebar.checkbox("ФВЧ фильтрация ЭКГ сигналов", value=config['filt'])
     if filt:
-        f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'])
-    f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'])
+        f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'], min_value=0.0)
+    f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'],  min_value=1)
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
 
@@ -103,8 +103,13 @@ def main(config : dict):
                 if not error:
                     if message != []:
                         st.markdown('---') 
-                        for result in message:
-                            st.markdown(result)
+                        for text in message:
+                            if 'Здоров' in text: 
+                                st.markdown(f'#### :green[{text}]')
+                            elif 'Болен' in text:
+                                st.markdown(f'#### :red[{text}]')
+                            else:
+                                st.markdown(f'##### {text}')
 
         else:
             st.warning("Пожалуйста, загрузите файл .edf для обработки.")
