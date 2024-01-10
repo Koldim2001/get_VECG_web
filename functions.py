@@ -19,8 +19,6 @@ from torchvision import transforms
 from models_for_inference.model import *
 import plotly.io as pio
 
-pio.templates.default = "plotly"  # Используем классический стиль Plotly
-#pio.templates.default = "plotly_dark"  # Используем темную тему Plotly
 
 
 def visualize_rotate(data):
@@ -357,10 +355,16 @@ def get_VECG(input_data: dict):
     mean_filter = input_data["mean_filter"]
     predict_res = input_data["predict"]
     plot_projections = input_data["plot_projections"]
+    st_theme = input_data["st_theme"]
     logs = input_data["logs"]
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
+    if st_theme == "Темная":
+        pio.templates.default = "plotly_dark"
+    else:    
+        pio.templates.default = "plotly"  # Используем классический стиль Plotly
+
     if logs:
         show_loops = True
         show_angle = True

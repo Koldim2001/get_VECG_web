@@ -2,11 +2,11 @@ import streamlit as st
 import json
 from functions import *
 import tempfile
+import plotly.io as pio
 
 
 def main(config : dict):
     st.title("Получение ВЭКГ")
-
     uploaded_file = st.sidebar.file_uploader("Выберите файл .edf", type="edf")
     if uploaded_file:
         st.write(f"Выбран файл: {uploaded_file.name}")
@@ -33,15 +33,20 @@ def main(config : dict):
     if filt:
         f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'], min_value=0.0)
     f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'],  min_value=1)
+    # Вопрос с выпадающим списком для выбора темы
+    theme_options = ["Темная", "Светлая"]
+    default_theme = "Светлая"  
+    selected_theme = st.sidebar.selectbox("Выберите тему для графиков", theme_options, index=theme_options.index(default_theme))
+    # Показать только при dev_mode логи обработки
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
+
 
     st.sidebar.markdown('---') 
     
     if button_pressed:
-        #print(temp_file_path)
+        # узнаем какая тема включена
         if uploaded_file is not None:
-
             with tempfile.NamedTemporaryFile(delete=False, suffix=".edf") as temp_file:
                 temp_file.write(uploaded_file.read())
                 temp_file_path = temp_file.name
@@ -61,7 +66,8 @@ def main(config : dict):
                     "t_loop_area": T_loop_area,
                     "mean_filter": mean_filter,
                     "logs": logs,
-                    "n_term_finish": None
+                    "n_term_finish": None,
+                    "st_theme": selected_theme
                 }
 
                 # Получить ВЭКГ
