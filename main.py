@@ -16,6 +16,7 @@ def main(config : dict):
                                        help="Нажмите, чтобы начать обработку данных", use_container_width=True)
     
     
+
     st.sidebar.markdown('---') 
     st.sidebar.markdown('### Выбор режимов:')
     plot_projections = st.sidebar.checkbox("Построение проекций ВЭКГ", value=config['plot_projections'])
@@ -26,6 +27,7 @@ def main(config : dict):
     QRS_loop_area = st.sidebar.checkbox("Расчет площади QRS петли", value=config['QRS_loop_area'])
     T_loop_area = st.sidebar.checkbox("Расчет площади ST-T петли", value=config['T_loop_area'])
 
+
     st.sidebar.markdown('---') 
     st.sidebar.markdown('### Настройки:')
     mean_filter = st.sidebar.checkbox("Сглаживание петель", value=config['mean_filter'])
@@ -33,10 +35,21 @@ def main(config : dict):
     if filt:
         f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'], min_value=0.0)
     f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'],  min_value=1)
-    # Вопрос с выпадающим списком для выбора темы
-    theme_options = ["Темная", "Светлая"]
-    default_theme = "Светлая"  
-    selected_theme = st.sidebar.selectbox("Выберите тему для графиков", theme_options, index=theme_options.index(default_theme))
+    # задание числа открывающихся окон:
+    options = ["Одна страница", "Множество страниц"]
+    default = config['window_web']  
+    window_web = st.sidebar.selectbox("Выберите режим вывода графиков", options, index=options.index(default))
+    if window_web == 'Одна страница':
+        single_window_web = True
+    else:
+        single_window_web = False
+    # Вопрос с выпадающим списком для выбора темы 
+    if window_web == "Множество страниц":
+        theme_options = ["Темная", "Светлая"]
+        default_theme = "Светлая"  
+        selected_theme = st.sidebar.selectbox("Выберите тему для графиков", theme_options, index=theme_options.index(default_theme))
+    else: 
+        selected_theme = "Светлая" 
     # Показать только при dev_mode логи обработки
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
@@ -44,6 +57,7 @@ def main(config : dict):
 
     st.sidebar.markdown('---') 
     
+
     if button_pressed:
         # узнаем какая тема включена
         if uploaded_file is not None:
@@ -67,11 +81,14 @@ def main(config : dict):
                     "mean_filter": mean_filter,
                     "logs": logs,
                     "n_term_finish": None,
-                    "st_theme": selected_theme
+                    "st_theme": selected_theme,
+                    "single_window_web": single_window_web
                 }
 
                 # Получить ВЭКГ
-                res = get_VECG(input_data)
+                output = get_VECG(input_data)
+                res = output['text']
+                charts = output['charts']
                 
                 # Обработаем результаты программы, поместив в список предложения:
                 message = []
@@ -116,6 +133,9 @@ def main(config : dict):
                                 st.markdown(f'#### :red[{text}]')
                             else:
                                 st.markdown(f'##### {text}')
+                    if charts != []:
+                        for chart in charts:
+                            st.plotly_chart(chart, use_container_width=True)
 
         else:
             st.warning("Пожалуйста, загрузите файл .edf для обработки.")
@@ -123,7 +143,7 @@ def main(config : dict):
 
 if __name__ == "__main__":
     # Загрузка конфигурации программы:
-    with open('configs/config.json', 'r') as json_file:
+    with open('configs/config.json', 'r', encoding='utf-8') as json_file:
         config = json.load(json_file)
     main(config)
 

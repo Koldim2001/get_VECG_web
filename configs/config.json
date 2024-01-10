@@ -12,5 +12,6 @@
     "mean_filter": true,
     "predict_res": true,
     "show_ECG": false,
-    "logs": false
+    "logs": false,
+    "window_web": "Одна страница" 
 }

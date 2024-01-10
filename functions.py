@@ -60,7 +60,7 @@ def visualize_rotate(data):
     return fig
 
 
-def show_3d(x, y, z):
+def show_3d(x, y, z, single_window_web):
     # Отображение 3D интерактивного окна
     data=[go.Scatter3d(x=x, y=y, z=z,
                        mode='lines+markers', opacity=1)]
@@ -68,7 +68,9 @@ def show_3d(x, y, z):
     fig.update_traces(marker=dict(size=3),
                       line=dict(width=5))
     fig.update_layout(title_text="3D представление ВЭКГ")
-    fig.show()
+    if not single_window_web:
+        fig.show()
+    return fig
 
 
 def convert_to_posix_path(windows_path):
@@ -279,7 +281,7 @@ def preprocessing_3d(list_coord):
     return df
 
 
-def angle_3d_plot(df1, df2, df3):
+def angle_3d_plot(df1, df2, df3, single_window_web):
     # Построение интерактивного графика логов вычисления угла QRST 
     fig = go.Figure()
 
@@ -316,6 +318,8 @@ def angle_3d_plot(df1, df2, df3):
     )
     fig.update_layout(title_text="Угол QRST")
     fig.show()
+  
+ 
 
 
 def apply_filter_mean(column, window_size):
@@ -357,6 +361,7 @@ def get_VECG(input_data: dict):
     plot_projections = input_data["plot_projections"]
     st_theme = input_data["st_theme"]
     logs = input_data["logs"]
+    single_window_web = input_data['single_window_web']
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
@@ -370,6 +375,8 @@ def get_VECG(input_data: dict):
         show_angle = True
         show_detect_pqrst = True
 
+    plotly_figures = []
+    output_results = {}
 
 
     # Устанавливаем фильтр для игнорирования всех RuntimeWarning
@@ -539,7 +546,7 @@ def get_VECG(input_data: dict):
         # Настройка макета и отображение графика
         fig.update_layout(
             xaxis=dict(range=[2, 5], title='Time (seconds)'),
-            yaxis=dict(title='Signal ECG I'),
+            yaxis=dict(title='Signal ECG'),
             title=f'Детекция PQRST на {n_otvedenie} отведении'
         )
         fig.show()
@@ -596,7 +603,10 @@ def get_VECG(input_data: dict):
 
         # Настроим макет и отобразим графики
         fig.update_layout(title_text="Графики ЭКГ отведений", height=fig_height)
-        fig.show()
+        if not single_window_web:
+            fig.show()
+        plotly_figures.append(fig)
+  
 
 
     # Расчет ВЭКГ
@@ -649,12 +659,15 @@ def get_VECG(input_data: dict):
         fig.update_xaxes(autorange="reversed", row=1, col=2)  # Переворачиваем ось x для trace2
         fig.update_yaxes(autorange="reversed", row=1, col=3)   # Переворачиваем ось y для trace3
 
-        fig.show()
+        if not single_window_web:
+            fig.show()
+        plotly_figures.append(fig)
 
 
     # Интерактивное 3D отображение
     if plot_3D:
-        show_3d(df_term.x,df_term.y,df_term.z)
+        fig = show_3d(df_term.x, df_term.y, df_term.z, single_window_web)
+        plotly_figures.append(fig)
         
 
     # Работа при указании одного периода ЭКГ: 
@@ -746,11 +759,14 @@ def get_VECG(input_data: dict):
             if show_angle:
                 df_qrs = preprocessing_3d(mean_qrs)
                 df_t = preprocessing_3d(mean_t)
-                angle_3d_plot(df_qrs, df_t, df_term)
+                angle_3d_plot(df_qrs, df_t, df_term, single_window_web)
+                
+    
+    output_results['text'] = (area_projections, angle_qrst, angle_qrst_front, message_predict)
+    output_results['charts'] = plotly_figures
     
 
-    return area_projections, angle_qrst, angle_qrst_front, message_predict
-
+    return output_results
 
 
 if __name__ == "__main__":
