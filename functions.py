@@ -515,8 +515,9 @@ def get_VECG(input_data: dict):
             # Настроим макет и отобразим графики
             fig.update_layout(title_text="Сигналы ЭКГ, которые не получилось обработать")
             fig.show()
-
-            return 'too_noisy'
+            output_results['text'] = 'too_noisy'
+            output_results['charts'] = []
+            return output_results
 
 
     # Поиск точек pqst:
@@ -567,7 +568,9 @@ def get_VECG(input_data: dict):
 
     if beg-1 < 0 or fin >= len(rpeaks['ECG_R_Peaks']):
         #print('Запрашиваемого перода/диапазона периодов не существует')
-        return 'no_this_period'
+        output_results['text'] = 'no_this_period'
+        output_results['charts'] = []
+        return output_results
     
     start = rpeaks['ECG_R_Peaks'][beg-1]
     end = rpeaks['ECG_R_Peaks'][fin]
