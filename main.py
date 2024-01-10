@@ -11,6 +11,7 @@ def main(config : dict):
     uploaded_file = st.sidebar.file_uploader("Выберите файл .edf", type="edf")
     if uploaded_file:
         st.write(f"Выбран файл: {uploaded_file.name}")
+        st.markdown('---') 
 
     n_term_start = st.sidebar.number_input("Номер периода ЭКГ", value=config['n_term_start'], min_value=1)
     button_pressed = st.sidebar.button(":red[Запуск]", key="launch_button",
@@ -126,7 +127,6 @@ def main(config : dict):
                 # Вывести результаты
                 if not error:
                     if message != []:
-                        st.markdown('---') 
                         for text in message:
                             if 'Здоров' in text: 
                                 st.markdown(f'#### :green[{text}]')
