@@ -71,10 +71,21 @@ def main(config : dict):
                     "n_term_finish": None
                 }
 
-                # Получить ВЭКГ
-                output = get_VECG(input_data)
-                res = output['text']
-                charts = output['charts']
+                # Получить ВЭКГ (запуск гланой функции)
+                try:
+                    output = get_VECG(input_data)
+                    # Выделение текстовых ответов и plotly графиков
+                    res = output['text']
+                    charts = output['charts']
+                except ValueError as e:
+                    # Обработка ошибок
+                    st.error("Для данного выбранного периода площади не могут быть посчитаны.")
+                    st.warning("Измените значение номера периода или отключите режим вычисления площадей.")
+                    if config["dev_mode"]:
+                        st.write(f"Код ошибки: {e}")
+                    res = ()
+                    charts = []
+
                 
                 # Обработаем результаты программы, поместив в список предложения:
                 message = []
@@ -104,7 +115,7 @@ def main(config : dict):
                     if input_data["count_qrst_angle"]:
                         message.append(f'Пространственный угол QRST равен {round(angle_qrst, 2)} градусов')
 
-                # Проверка на факт наличия ошибок (для разработчика)
+                # Проверка на факт наличия дополнительных ошибок (для разработчика)
                 if isinstance(res, str) and config["dev_mode"] and res not in ['no_this_period', 'too_noisy']: 
                     st.error(res)
 
