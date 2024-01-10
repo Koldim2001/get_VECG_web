@@ -60,7 +60,7 @@ def visualize_rotate(data):
     return fig
 
 
-def show_3d(x, y, z, single_window_web):
+def show_3d(x, y, z):
     # Отображение 3D интерактивного окна
     data=[go.Scatter3d(x=x, y=y, z=z,
                        mode='lines+markers', opacity=1)]
@@ -68,10 +68,7 @@ def show_3d(x, y, z, single_window_web):
     fig.update_traces(marker=dict(size=3),
                       line=dict(width=5))
     fig.update_layout(title_text="3D представление ВЭКГ")
-    if not single_window_web:
-        fig.show()
-    else:
-        fig.update_layout(height=800)
+    fig.update_layout(height=800)
     return fig
 
 
@@ -172,7 +169,7 @@ def make_vecg(df_term):
     return df_term
 
     
-def loop(df_term, name, show=False):
+def loop(df_term, name, plotly_figures, show=False):
     # Подсчет и отображение площади петли
     if name == 'T':
         name_loop = 'ST-T'
@@ -207,7 +204,7 @@ def loop(df_term, name, show=False):
         fig.update_yaxes(autorange="reversed", row=1, col=3)   # Переворачиваем ось y для trace3
 
         # Отображение графика
-        fig.show()
+        plotly_figures.append(fig)
     
     points = list(zip(df_term['y'], df_term['z']))
     area_inside_loop_1 = calculate_area(points)
@@ -224,7 +221,7 @@ def loop(df_term, name, show=False):
     return area_inside_loop_1, area_inside_loop_2, area_inside_loop_3
 
 
-def get_area(show, df, waves_peak, start, Fs_new, QRS, T):
+def get_area(show, df, waves_peak, start, Fs_new, QRS, T, plotly_figures):
     # Выделяет области петель для дальнейшей обработки - подсчета угла QRST и площадей
     area = []
     # Уберем nan:
@@ -244,7 +241,7 @@ def get_area(show, df, waves_peak, start, Fs_new, QRS, T):
     df_term = pd.concat([df_term, df_row])
     mean_qrs = find_mean(df_term)
     if QRS:
-        area = list(loop(df_term, name='QRS', show=show))
+        area = list(loop(df_term, name='QRS', plotly_figures=plotly_figures, show=show))
 
     ## ST-T петля
     # Ищем ближний пик к R пику
@@ -257,7 +254,7 @@ def get_area(show, df, waves_peak, start, Fs_new, QRS, T):
     df_term = pd.concat([df_term, df_row])
     mean_t = find_mean(df_term)
     if T:
-        area.extend(list(loop(df_term, name='T', show=show)))
+        area.extend(list(loop(df_term, name='T', plotly_figures=plotly_figures, show=show)))
     return area, mean_qrs, mean_t
 
 
@@ -283,7 +280,7 @@ def preprocessing_3d(list_coord):
     return df
 
 
-def angle_3d_plot(df1, df2, df3, single_window_web):
+def angle_3d_plot(df1, df2, df3):
     # Построение интерактивного графика логов вычисления угла QRST 
     fig = go.Figure()
 
@@ -319,7 +316,8 @@ def angle_3d_plot(df1, df2, df3, single_window_web):
         )
     )
     fig.update_layout(title_text="Угол QRST")
-    fig.show()
+    fig.update_layout(height=800)
+    return fig
   
  
 
@@ -361,16 +359,12 @@ def get_VECG(input_data: dict):
     mean_filter = input_data["mean_filter"]
     predict_res = input_data["predict"]
     plot_projections = input_data["plot_projections"]
-    st_theme = input_data["st_theme"]
     logs = input_data["logs"]
-    single_window_web = input_data['single_window_web']
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
-    if st_theme == "Темная":
-        pio.templates.default = "plotly_dark"
-    else:    
-        pio.templates.default = "plotly"  # Используем классический стиль Plotly
+  
+    pio.templates.default = "plotly"  # Используем классический стиль Plotly
 
     if logs:
         show_loops = True
@@ -514,9 +508,8 @@ def get_VECG(input_data: dict):
 
             # Настроим макет и отобразим графики
             fig.update_layout(title_text="Сигналы ЭКГ, которые не получилось обработать")
-            fig.show()
             output_results['text'] = 'too_noisy'
-            output_results['charts'] = []
+            output_results['charts'] = [fig]
             return output_results
 
 
@@ -552,7 +545,7 @@ def get_VECG(input_data: dict):
             yaxis=dict(title='Signal ECG'),
             title=f'Детекция PQRST на {n_otvedenie} отведении'
         )
-        fig.show()
+        plotly_figures.append(fig)
 
 
     # Выбор исследуемого периода/периодов
@@ -608,8 +601,6 @@ def get_VECG(input_data: dict):
 
         # Настроим макет и отобразим графики
         fig.update_layout(title_text="Графики ЭКГ отведений", height=fig_height)
-        if not single_window_web:
-            fig.show()
         plotly_figures.append(fig)
   
 
@@ -664,14 +655,12 @@ def get_VECG(input_data: dict):
         fig.update_xaxes(autorange="reversed", row=1, col=2)  # Переворачиваем ось x для trace2
         fig.update_yaxes(autorange="reversed", row=1, col=3)   # Переворачиваем ось y для trace3
 
-        if not single_window_web:
-            fig.show()
         plotly_figures.append(fig)
 
 
     # Интерактивное 3D отображение
     if plot_3D:
-        fig = show_3d(df_term.x, df_term.y, df_term.z, single_window_web)
+        fig = show_3d(df_term.x, df_term.y, df_term.z)
         plotly_figures.append(fig)
         
 
@@ -753,7 +742,7 @@ def get_VECG(input_data: dict):
             area_projections , mean_qrs, mean_t = get_area(show=show_loops, df=df,
                                                         waves_peak=waves_peak, start=start,
                                                         Fs_new=Fs_new,  QRS=QRS_loop_area, 
-                                                       T=T_loop_area)
+                                                       T=T_loop_area, plotly_figures=plotly_figures)
         # Определение угла QRST:
         if count_qrst_angle:
             angle_qrst = find_qrst_angle(mean_qrs, mean_t)
@@ -764,7 +753,8 @@ def get_VECG(input_data: dict):
             if show_angle:
                 df_qrs = preprocessing_3d(mean_qrs)
                 df_t = preprocessing_3d(mean_t)
-                angle_3d_plot(df_qrs, df_t, df_term, single_window_web)
+                fig = angle_3d_plot(df_qrs, df_t, df_term)
+                plotly_figures.append(fig)
                 
     
     output_results['text'] = (area_projections, angle_qrst, angle_qrst_front, message_predict)

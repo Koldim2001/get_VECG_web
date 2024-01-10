@@ -1,5 +1,5 @@
 {
-    "dev_mode": false,
+    "dev_mode": true,
     "n_term_start": 3,
     "filt": true,
     "f_sreza": 0.7,
@@ -12,6 +12,5 @@
     "mean_filter": true,
     "predict_res": true,
     "show_ECG": true,
-    "logs": false,
-    "window_web": "Одна страница" 
+    "logs": false
 }

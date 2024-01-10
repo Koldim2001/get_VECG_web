@@ -36,21 +36,6 @@ def main(config : dict):
     if filt:
         f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'], min_value=0.0)
     f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'],  min_value=1)
-    # задание числа открывающихся окон:
-    options = ["Одна страница", "Множество страниц"]
-    default = config['window_web']  
-    window_web = st.sidebar.selectbox("Выберите режим вывода графиков", options, index=options.index(default))
-    if window_web == 'Одна страница':
-        single_window_web = True
-    else:
-        single_window_web = False
-    # Вопрос с выпадающим списком для выбора темы 
-    if window_web == "Множество страниц":
-        theme_options = ["Темная", "Светлая"]
-        default_theme = "Светлая"  
-        selected_theme = st.sidebar.selectbox("Выберите тему для графиков", theme_options, index=theme_options.index(default_theme))
-    else: 
-        selected_theme = "Светлая" 
     # Показать только при dev_mode логи обработки
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
@@ -83,9 +68,7 @@ def main(config : dict):
                     "t_loop_area": T_loop_area,
                     "mean_filter": mean_filter,
                     "logs": logs,
-                    "n_term_finish": None,
-                    "st_theme": selected_theme,
-                    "single_window_web": single_window_web
+                    "n_term_finish": None
                 }
 
                 # Получить ВЭКГ
@@ -135,9 +118,9 @@ def main(config : dict):
                                 st.markdown(f'#### :red[{text}]')
                             else:
                                 st.markdown(f'##### {text}')
-                    if charts != []:
-                        for chart in charts:
-                            st.plotly_chart(chart, use_container_width=True)
+                if charts != []:
+                    for chart in charts:
+                        st.plotly_chart(chart, use_container_width=True)
 
         else:
             st.warning("Пожалуйста, загрузите файл .edf для обработки.")
