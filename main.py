@@ -2,7 +2,6 @@ import streamlit as st
 import json
 from functions import *
 import tempfile
-import plotly.io as pio
 
 
 def main(config : dict):
@@ -55,6 +54,8 @@ def main(config : dict):
     # Показать только при dev_mode логи обработки
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
+    else:
+        logs = False
 
 
     st.sidebar.markdown('---') 
