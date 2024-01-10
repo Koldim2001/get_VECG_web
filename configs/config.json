@@ -1,5 +1,5 @@
 {
-    "dev_mode": false,
+    "dev_mode": true,
     "n_term_start": 3,
     "filt": true,
     "f_sreza": 0.7,
