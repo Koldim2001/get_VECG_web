@@ -5,7 +5,11 @@ import tempfile
 
 
 def main(config : dict):
-    st.set_page_config(layout="wide")
+    st.set_page_config(
+        page_title="get_VECG",
+        page_icon='configs/logo.png',
+        layout="wide",
+        initial_sidebar_state="expanded",)
     st.title("Получение ВЭКГ")
     uploaded_file = st.sidebar.file_uploader("Выберите файл .edf", type="edf")
     if uploaded_file:
