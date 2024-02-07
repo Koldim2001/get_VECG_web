@@ -56,6 +56,7 @@ def main(config : dict):
             with tempfile.NamedTemporaryFile(delete=False, suffix=".edf") as temp_file:
                 temp_file.write(uploaded_file.read())
                 temp_file_path = temp_file.name
+                #st.write(f'Загружен файл - {temp_file.name}')
 
                 input_data = {
                     "data_edf": temp_file_path,
@@ -90,7 +91,6 @@ def main(config : dict):
                     res = ()
                     charts = []
 
-                
                 # Обработаем результаты программы, поместив в список предложения:
                 message = []
                 error = False
@@ -136,6 +136,10 @@ def main(config : dict):
                 if charts != []:
                     for chart in charts:
                         st.plotly_chart(chart, use_container_width=True)
+            
+            # Очиста временных файлов после инференса
+            os.remove(temp_file.name)
+            #st.write(f'Удален файл - {temp_file.name}')
 
         else:
             st.warning("Пожалуйста, загрузите файл .edf для обработки.")
