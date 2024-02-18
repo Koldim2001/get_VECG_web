@@ -21,7 +21,6 @@ def main(config : dict):
                                        help="Нажмите, чтобы начать обработку данных", use_container_width=True)
     
     
-
     st.sidebar.markdown('---') 
     st.sidebar.markdown('### Выбор режимов:')
     plot_projections = st.sidebar.checkbox("Построение проекций ВЭКГ", value=config['plot_projections'])
@@ -40,6 +39,8 @@ def main(config : dict):
     if filt:
         f_sreza = st.sidebar.number_input("Частота среза ФВЧ фильтра (в Гц)", value=config['f_sreza'], min_value=0.0)
     f_sampling = st.sidebar.number_input("Частота дискретизации (в Гц)", value=config['f_sampling'],  min_value=1)
+    pr_delta = st.sidebar.number_input("Сдвиг от R пика (в долях от размера кардиоцикла)",
+                                       value=config['pr_delta'], min_value=0.00, max_value=1.0)
     # Показать только при dev_mode логи обработки
     if config["dev_mode"]:
         logs = st.sidebar.checkbox("Показ логов обработки", value=config['logs'])  # Показать только при dev_mode
@@ -74,6 +75,7 @@ def main(config : dict):
                     "mean_filter": mean_filter,
                     "logs": logs,
                     "n_term_finish": None,
+                    "pr_delta": pr_delta,
                     "save_coord": False
                 }
 

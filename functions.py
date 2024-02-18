@@ -361,6 +361,7 @@ def get_VECG(input_data: dict):
     plot_projections = input_data["plot_projections"]
     logs = input_data["logs"]
     save_coord = input_data["save_coord"] 
+    pr_delta = input_data["pr_delta"]
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
@@ -513,6 +514,9 @@ def get_VECG(input_data: dict):
             output_results['charts'] = [fig]
             return output_results
 
+    # Поиск медианного размера кардиоцикла для данного пациента (нужно для рассчета сдвига pr)
+    dif_rr = np.diff(rpeaks['ECG_R_Peaks'])
+    median_rr = np.median(dif_rr)
 
     # Поиск точек pqst:
     _, waves_peak = nk.ecg_delineate(signal, rpeaks, sampling_rate=Fs_new, method="peak")
@@ -566,12 +570,15 @@ def get_VECG(input_data: dict):
         output_results['charts'] = []
         return output_results
     
-    start = rpeaks['ECG_R_Peaks'][beg-1]
-    end = rpeaks['ECG_R_Peaks'][fin]
+    start_r = rpeaks['ECG_R_Peaks'][beg-1]
+    end_r = rpeaks['ECG_R_Peaks'][fin]
+
+    # сдвиг pr:
+    start = start_r - int(median_rr * pr_delta)
+    end = end_r - int(median_rr * pr_delta)
     df_term = df.iloc[start:end,:]
     df_row = df.iloc[start:start+1,:]
     
-
 
     # Отображение многоканального ЭКГ 
     if show_ECG:
@@ -604,7 +611,13 @@ def get_VECG(input_data: dict):
         fig.update_layout(title_text="Графики ЭКГ отведений", height=fig_height)
         plotly_figures.append(fig)
   
-
+    # Проверка на адекватность значений median_rr
+    if (median_rr > Fs_new * 3) or (median_rr < Fs_new * 0.1):
+            print('Медиана RR имеет неадекватные значения (ошибка детектирования R пиков)')
+            output_results['text'] = 'too_noisy'
+            output_results['charts'] = plotly_figures
+            return output_results
+    
     # Расчет ВЭКГ
     df_term = pd.concat([df_term, df_row])
     df_term = make_vecg(df_term)
