@@ -25,7 +25,8 @@ def main(config : dict):
     st.sidebar.markdown('### Выбор режимов:')
     plot_projections = st.sidebar.checkbox("Построение проекций ВЭКГ", value=config['plot_projections'])
     plot_3D = st.sidebar.checkbox("Построение 3D ВЭКГ", value=config['plot_3D'])
-    show_ECG = st.sidebar.checkbox("Отображение ЭКГ сигналов", value=config['show_ECG'])
+    show_ECG = st.sidebar.checkbox("Отображение ЭКГ отведений", value=config['show_ECG'])
+    show_xyz = st.sidebar.checkbox("Отображение ВЭКГ отведений", value=config['show_xyz'])
     predict_res = st.sidebar.checkbox("Результат СППР (болен/здоров)", value=config['predict_res'])
     count_qrst_angle = st.sidebar.checkbox("Расчет угла QRST", value=config['count_qrst_angle'])
     QRS_loop_area = st.sidebar.checkbox("Расчет площади QRS петли", value=config['QRS_loop_area'])
@@ -76,6 +77,7 @@ def main(config : dict):
                     "logs": logs,
                     "n_term_finish": None,
                     "pr_delta": pr_delta,
+                    "show_xyz": show_xyz,
                     "save_coord": False
                 }
 

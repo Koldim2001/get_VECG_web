@@ -362,6 +362,7 @@ def get_VECG(input_data: dict):
     logs = input_data["logs"]
     save_coord = input_data["save_coord"] 
     pr_delta = input_data["pr_delta"]
+    show_XYZ = input_data["show_xyz"]
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
@@ -610,7 +611,40 @@ def get_VECG(input_data: dict):
         # Настроим макет и отобразим графики
         fig.update_layout(title_text="Графики ЭКГ отведений", height=fig_height)
         plotly_figures.append(fig)
+
+    # Отображение отведений XYZ
+    if show_XYZ:
+        df = make_vecg(df)
+        df_term_show = make_vecg(df_term.copy())
+        # Создаем подразделы для графиков
+        rows = 3
+        cols = 1
+        fig = make_subplots(rows=rows, cols=cols, shared_xaxes=True, subplot_titles=['X','Y','Z'])
+
+        # Задаем общий интервал по оси X
+        x_range = [0.5, 9.5]
+
+        fig_height = 3 * 140
+
+        # Добавляем графики в subplot
+        for i, graph in enumerate(['x','y','z']):
+            row = i + 1
+
+            trace1 = go.Scatter(x=df['time'], y=df[graph], mode='lines', name=graph,
+                                line=dict(color='blue'), showlegend=False)
+            trace2 = go.Scatter(x=df_term_show['time'], y=df_term_show[graph],
+                                mode='lines', name='Term_' + graph,
+                                line=dict(color='red'), showlegend=False)
+
+            fig.add_trace(trace1, row=row, col=1)
+            fig.add_trace(trace2, row=row, col=1)
+            fig.update_xaxes(row=row, col=1, range=x_range)
+
+        # Настроим макет и отобразим графики
+        fig.update_layout(title_text="Графики ВЭКГ отведений", height=fig_height)
+        plotly_figures.append(fig)
   
+
     # Проверка на адекватность значений median_rr
     if (median_rr > Fs_new * 3) or (median_rr < Fs_new * 0.1):
             print('Медиана RR имеет неадекватные значения (ошибка детектирования R пиков)')
@@ -621,7 +655,6 @@ def get_VECG(input_data: dict):
     # Расчет ВЭКГ
     df_term = pd.concat([df_term, df_row])
     df_term = make_vecg(df_term)
-    df = make_vecg(df)
     df_term['size'] = 100 # задание размера для 3D визуализации
 
     # Сглаживание петель
@@ -787,13 +820,12 @@ def get_VECG(input_data: dict):
     output_results['text'] = (area_projections, angle_qrst, angle_qrst_front, message_predict)
     output_results['charts'] = plotly_figures
     
-
     return output_results
 
 
 if __name__ == "__main__":
     input_data = {}
-    input_data["data_edf"] = 'Data_VECG/ECG_1.edf'
+    input_data["data_edf"] = 'Data_for_testing/ECG_bad_1.edf'
     input_data["n_term_start"] = 3
     input_data["n_term_finish"] = None
     input_data["filt"] = True
@@ -809,4 +841,7 @@ if __name__ == "__main__":
     input_data["predict"] = True
     input_data["plot_projections"] = True
     input_data["logs"] = True
+    save_coord = False
+    pr_delta = 0.5
+    show_XYZ = True
     get_VECG(input_data)
