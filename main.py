@@ -91,56 +91,56 @@ def main(config : dict):
                         st.write(f"Код ошибки: {e}")
                     res = ()
                     charts = []
-
-                # Обработаем результаты программы, поместив в список предложения:
-                message = []
-                error = False
-                if res == 'no_this_period':
-                    st.error("Не найден такой период. Попробуйте ввести меньше значение")
-                    error = True
-                elif res == 'too_noisy':
-                    st.error("Не получилось построить ВЭКГ, так как ЭКГ слишком шумный")
-                    error = True
-                elif len(res) == 4:
-                    area_projections, angle_qrst, angle_qrst_front, message_predict = res
-                    if input_data["predict"]:
-                        message.append('__СППР: ' + message_predict)
-                    if input_data["qrs_loop_area"]:
-                        message.append(f'Площадь петли QRS во фронтальной плоскости: {"{:.3e}".format(area_projections[0])}')
-                        message.append(f'Площадь петли QRS во сагиттальной плоскости: {"{:.3e}".format(area_projections[1])}')
-                        message.append(f'Площадь петли QRS во аксиальной плоскости: {"{:.3e}".format(area_projections[2])}')
-                    if input_data["qrs_loop_area"] and input_data["t_loop_area"]:
-                        message.append(f'Площадь петли ST-T во фронтальной плоскости: {"{:.3e}".format(area_projections[3])}')
-                        message.append(f'Площадь петли ST-T во сагиттальной плоскости: {"{:.3e}".format(area_projections[4])}')
-                        message.append(f'Площадь петли ST-T во аксиальной плоскости: {"{:.3e}".format(area_projections[5])}')
-                    elif input_data["t_loop_area"]:
-                        message.append(f'Площадь петли ST-T во фронтальной плоскости: {"{:.3e}".format(area_projections[0])}')
-                        message.append(f'Площадь петли ST-T во сагиттальной плоскости: {"{:.3e}".format(area_projections[1])}')
-                        message.append(f'Площадь петли ST-T во аксиальной плоскости: {"{:.3e}".format(area_projections[2])}')
-                    if input_data["count_qrst_angle"]:
-                        message.append(f'Пространственный угол QRST равен {round(angle_qrst, 2)} градусов')
-
-                # Проверка на факт наличия дополнительных ошибок (для разработчика)
-                if isinstance(res, str) and config["dev_mode"] and res not in ['no_this_period', 'too_noisy']: 
-                    st.error(res)
-
-                # Вывести результаты
-                if not error:
-                    if message != []:
-                        for text in message:
-                            if 'Здоров' in text: 
-                                st.markdown(f'#### :green[{text}]')
-                            elif 'Болен' in text:
-                                st.markdown(f'#### :red[{text}]')
-                            else:
-                                st.markdown(f'##### {text}')
-                if charts != []:
-                    for chart in charts:
-                        st.plotly_chart(chart, use_container_width=True)
-            
+                
             # Очиста временных файлов после инференса
             os.remove(temp_file.name)
             #st.write(f'Удален файл - {temp_file.name}')
+
+            # Обработаем результаты программы, поместив в список предложения:
+            message = []
+            error = False
+            if res == 'no_this_period':
+                st.error("Не найден такой период. Попробуйте ввести меньше значение")
+                error = True
+            elif res == 'too_noisy':
+                st.error("Не получилось построить ВЭКГ, так как ЭКГ слишком шумный")
+                error = True
+            elif len(res) == 4:
+                area_projections, angle_qrst, angle_qrst_front, message_predict = res
+                if input_data["predict"]:
+                    message.append('__СППР: ' + message_predict)
+                if input_data["qrs_loop_area"]:
+                    message.append(f'Площадь петли QRS во фронтальной плоскости: {"{:.3e}".format(area_projections[0])}')
+                    message.append(f'Площадь петли QRS во сагиттальной плоскости: {"{:.3e}".format(area_projections[1])}')
+                    message.append(f'Площадь петли QRS во аксиальной плоскости: {"{:.3e}".format(area_projections[2])}')
+                if input_data["qrs_loop_area"] and input_data["t_loop_area"]:
+                    message.append(f'Площадь петли ST-T во фронтальной плоскости: {"{:.3e}".format(area_projections[3])}')
+                    message.append(f'Площадь петли ST-T во сагиттальной плоскости: {"{:.3e}".format(area_projections[4])}')
+                    message.append(f'Площадь петли ST-T во аксиальной плоскости: {"{:.3e}".format(area_projections[5])}')
+                elif input_data["t_loop_area"]:
+                    message.append(f'Площадь петли ST-T во фронтальной плоскости: {"{:.3e}".format(area_projections[0])}')
+                    message.append(f'Площадь петли ST-T во сагиттальной плоскости: {"{:.3e}".format(area_projections[1])}')
+                    message.append(f'Площадь петли ST-T во аксиальной плоскости: {"{:.3e}".format(area_projections[2])}')
+                if input_data["count_qrst_angle"]:
+                    message.append(f'Пространственный угол QRST равен {round(angle_qrst, 2)} градусов')
+
+            # Проверка на факт наличия дополнительных ошибок (для разработчика)
+            if isinstance(res, str) and config["dev_mode"] and res not in ['no_this_period', 'too_noisy']: 
+                st.error(res)
+
+            # Вывести результаты
+            if not error:
+                if message != []:
+                    for text in message:
+                        if 'Здоров' in text: 
+                            st.markdown(f'#### :green[{text}]')
+                        elif 'Болен' in text:
+                            st.markdown(f'#### :red[{text}]')
+                        else:
+                            st.markdown(f'##### {text}')
+            if charts != []:
+                for chart in charts:
+                    st.plotly_chart(chart, use_container_width=True)
 
         else:
             st.warning("Пожалуйста, загрузите файл .edf для обработки.")
