@@ -16,7 +16,7 @@ def main(config : dict):
         st.write(f"Выбран файл: {uploaded_file.name}")
         st.markdown('---') 
 
-    n_term_start = st.sidebar.number_input("Номер периода ЭКГ", value=config['n_term_start'], min_value=1)
+    n_term_start = st.sidebar.number_input("Номер периода ЭКГ", value=config['n_term_start'], min_value=2)
     button_pressed = st.sidebar.button(":red[Запуск]", key="launch_button",
                                        help="Нажмите, чтобы начать обработку данных", use_container_width=True)
     
@@ -73,7 +73,8 @@ def main(config : dict):
                     "t_loop_area": T_loop_area,
                     "mean_filter": mean_filter,
                     "logs": logs,
-                    "n_term_finish": None
+                    "n_term_finish": None,
+                    "save_coord": False
                 }
 
                 # Получить ВЭКГ (запуск гланой функции)

@@ -360,6 +360,7 @@ def get_VECG(input_data: dict):
     predict_res = input_data["predict"]
     plot_projections = input_data["plot_projections"]
     logs = input_data["logs"]
+    save_coord = input_data["save_coord"] 
     show_loops = False
     show_angle = False
     show_detect_pqrst = False
@@ -604,7 +605,6 @@ def get_VECG(input_data: dict):
         plotly_figures.append(fig)
   
 
-
     # Расчет ВЭКГ
     df_term = pd.concat([df_term, df_row])
     df_term = make_vecg(df_term)
@@ -666,6 +666,20 @@ def get_VECG(input_data: dict):
 
     # Работа при указании одного периода ЭКГ: 
     if  n_term_finish == None or n_term_finish == n_term_start:
+        if save_coord:
+            df_save = df_term[['x', 'y', 'z']]
+            # Путь к файлу CSV для сохранения
+            file_name_without_extension = os.path.splitext(os.path.basename(data_edf))[0]
+            name = f'{file_name_without_extension}_period_{n_term_start}.csv'
+
+            # Сохраняем выбранные столбцы в CSV файл
+                # Создадим папки для записи если их еще нет:
+            if not os.path.exists('point_cloud_dataset'):
+                os.makedirs('point_cloud_dataset')
+            df_save.to_csv('point_cloud_dataset/' + name, index=False)
+
+            return df_save.shape[0]
+
         ## Масштабирование:
         # Поиск центра масс:
         x_center = df_term.x.mean()
