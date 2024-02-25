@@ -751,8 +751,8 @@ def get_VECG(input_data: dict):
         if predict_res:
             point_cloud_array_innitial = df_term[['x', 'y', 'z']].values
             
-            # Приведем к дискретизации 700 Гц на котором обучалась сеть
-            new_num_points = int(len(point_cloud_array_innitial) * 700 / Fs_new)
+            # Приведем к дискретизации 1000 Гц на котором обучалась сеть
+            new_num_points = int(len(point_cloud_array_innitial) * 1000 / Fs_new)
             
 
             # Инициализируем новый массив
@@ -761,7 +761,7 @@ def get_VECG(input_data: dict):
             # Производим ресемплирование каждой координаты
             for i in range(3):
                 point_cloud_array[:, i] = discrete_signal_resample_for_DL(point_cloud_array_innitial[:, i],
-                                                                          Fs_new, 700)
+                                                                          Fs_new, 1000)
 
             # Трансформация входных данных
             val_transforms = transforms.Compose([
@@ -798,6 +798,7 @@ def get_VECG(input_data: dict):
         angle_qrst_front = None
 
         if count_qrst_angle or T_loop_area or QRS_loop_area:
+            start = start_r # Считать надо для всех расчетов петель относительно реального R пика
             # Поиск площадей при задании на исследование одного периодка ЭКГ:
             area_projections , mean_qrs, mean_t = get_area(show=show_loops, df=df,
                                                         waves_peak=waves_peak, start=start,
