@@ -842,7 +842,8 @@ if __name__ == "__main__":
     input_data["predict"] = True
     input_data["plot_projections"] = True
     input_data["logs"] = True
-    save_coord = False
-    pr_delta = 0.5
-    show_XYZ = True
-    get_VECG(input_data)
+    input_data["save_coord"] = False
+    input_data["pr_delta"] = 0.5
+    input_data["show_xyz"] = True
+    output_results = get_VECG(input_data)
+    print(output_results)
