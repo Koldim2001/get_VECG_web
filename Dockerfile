@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/Koldim2001/get_VECG_web.git .
+# Копируем все файлы из текущего каталога в контейнер
+COPY . .
+#RUN git clone https://github.com/Koldim2001/get_VECG_web.git .
 
 RUN pip3 install -r requirements.txt
 

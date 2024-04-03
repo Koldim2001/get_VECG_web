@@ -16,7 +16,7 @@
 _PS: ДЛЯ ТЕСТИРОВАНИЯ РАБОТЫ ПРИЛОЖЕНИЯ МОЖНО ИСПОЛЬЗОВАТЬ EDF ФАЙЛЫ В ПАПКЕ_ - ___Data_for_testing___
 
 <div style="text-align:center;">
-  <img src="configs/example_of_app.gif" alt="pathology" width="850">
+  <img src="configs/example_of_app.gif" alt="pathology" width="880">
 </div>
 
 
@@ -50,14 +50,14 @@ streamlit run main.py
 
 
 ### __Используя Docker:__
-1. Команда загружает образ Docker с именем koldim2001/get_vecg_web и тегом 1.0_dev из Docker Hub на вашу локальную машину. Этот образ содержит всю необходимую конфигурацию и зависимости для запуска приложения:
+1. Команда загружает образ Docker с именем koldim2001/get_vecg_web и тегом 2.0_dev из Docker Hub на вашу локальную машину. Этот образ содержит всю необходимую конфигурацию и зависимости для запуска приложения:
 ```
-docker pull koldim2001/get_vecg_web:1.0_dev
+docker pull koldim2001/get_vecg_web:2.0_dev
 ```
 
 2. Команда  запускает контейнер из загруженного образа. Флаг -p 8501:8501 связывает порт 8501 контейнера с портом 8501 хоста, что позволяет внешним пользователям обращаться к приложению:
 ```
-docker run -p 8501:8501 koldim2001/get_vecg_web:1.0_dev
+docker run -p 8501:8501 koldim2001/get_vecg_web:2.0_dev
 ```
 
 

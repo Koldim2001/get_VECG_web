@@ -7,5 +7,5 @@ pyEDFlib==0.1.36
 scipy==1.11.4
 shapely==2.0.2
 streamlit==1.29.0
-torch==1.13.1+cu117
-torchvision==0.14.1+cu117
+torch
+torchvision
