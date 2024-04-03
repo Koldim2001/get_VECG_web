@@ -1,7 +1,6 @@
 import streamlit as st
 import json
 from functions import *
-import tempfile
 
 
 def main(config : dict):
@@ -53,52 +52,51 @@ def main(config : dict):
     
 
     if button_pressed:
-        # узнаем какая тема включена
         if uploaded_file is not None:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".edf") as temp_file:
+            temp_file_path = "temp.edf"  # Имя временного файла
+            with open(temp_file_path, "wb") as temp_file:
                 temp_file.write(uploaded_file.read())
-                temp_file_path = temp_file.name
-                #st.write(f'Загружен файл - {temp_file.name}')
+            #st.write(f'Загружен файл - {temp_file_path}')
 
-                input_data = {
-                    "data_edf": temp_file_path,
-                    "n_term_start": n_term_start,
-                    "filt": filt,
-                    "f_sreza": f_sreza if filt else None,
-                    "f_sampling": f_sampling,
-                    "plot_projections": plot_projections,
-                    "plot_3d": plot_3D,
-                    "show_ecg": show_ECG,
-                    "predict": predict_res,
-                    "count_qrst_angle": count_qrst_angle,
-                    "qrs_loop_area": QRS_loop_area,
-                    "t_loop_area": T_loop_area,
-                    "mean_filter": mean_filter,
-                    "logs": logs,
-                    "n_term_finish": None,
-                    "pr_delta": pr_delta,
-                    "show_xyz": show_xyz,
-                    "save_coord": False
-                }
+            input_data = {
+                "data_edf": temp_file_path,
+                "n_term_start": n_term_start,
+                "filt": filt,
+                "f_sreza": f_sreza if filt else None,
+                "f_sampling": f_sampling,
+                "plot_projections": plot_projections,
+                "plot_3d": plot_3D,
+                "show_ecg": show_ECG,
+                "predict": predict_res,
+                "count_qrst_angle": count_qrst_angle,
+                "qrs_loop_area": QRS_loop_area,
+                "t_loop_area": T_loop_area,
+                "mean_filter": mean_filter,
+                "logs": logs,
+                "n_term_finish": None,
+                "pr_delta": pr_delta,
+                "show_xyz": show_xyz,
+                "save_coord": False
+            }
 
-                # Получить ВЭКГ (запуск гланой функции)
-                try:
-                    output = get_VECG(input_data)
-                    # Выделение текстовых ответов и plotly графиков
-                    res = output['text']
-                    charts = output['charts']
-                except ValueError as e:
-                    # Обработка ошибок
-                    st.error("Для данного выбранного периода площади не могут быть посчитаны.")
-                    st.warning("Измените значение номера периода или отключите режим вычисления площадей.")
-                    if config["dev_mode"]:
-                        st.write(f"Код ошибки: {e}")
-                    res = ()
-                    charts = []
+            # Получить ВЭКГ (запуск гланой функции)
+            try:
+                output = get_VECG(input_data)
+                # Выделение текстовых ответов и plotly графиков
+                res = output['text']
+                charts = output['charts']
+            except ValueError as e:
+                # Обработка ошибок
+                st.error("Для данного выбранного периода площади не могут быть посчитаны.")
+                st.warning("Измените значение номера периода или отключите режим вычисления площадей.")
+                if config["dev_mode"]:
+                    st.write(f"Код ошибки: {e}")
+                res = ()
+                charts = []
                 
             # Очиста временных файлов после инференса
-            os.remove(temp_file.name)
-            #st.write(f'Удален файл - {temp_file.name}')
+            os.remove(temp_file_path)
+            #st.write(f'Удален файл - {temp_file_path}')
 
             # Обработаем результаты программы, поместив в список предложения:
             message = []
