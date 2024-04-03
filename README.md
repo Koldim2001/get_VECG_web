@@ -15,9 +15,7 @@
 
 _PS: ДЛЯ ТЕСТИРОВАНИЯ РАБОТЫ ПРИЛОЖЕНИЯ МОЖНО ИСПОЛЬЗОВАТЬ EDF ФАЙЛЫ В ПАПКЕ_ - ___Data_for_testing___
 
-<div style="text-align:center;">
-  <img src="configs/example_of_app.gif" alt="pathology" width="880">
-</div>
+![example-of-web](configs/example_of_app.gif)
 
 
 ---
