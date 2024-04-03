@@ -1,6 +1,7 @@
 /test
 **/__pycache__/ 
 **.edf
+**.ipynb
 .ipynb_checkpoints
 /saved_vECG
 /get_vECG.egg-info
