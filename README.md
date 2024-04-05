@@ -9,7 +9,9 @@
 ---
 
 ### Видео туториалы: 
->  [__Презентация работы веб-приложения__](https://youtu.be/TCfUCI8y7v0)
+>  [__Презентация работы веб-приложения__](https://www.youtube.com/watch?v=TCfUCI8y7v0)
+>
+>  [__Презентация обновлений 2 версии__](https://www.youtube.com/watch?v=JwFI7NpPgeQ)
 
 Веб-сервис доступен по данной ссылке - [__get-vecg__](https://get-vecg.streamlit.app/)
 
