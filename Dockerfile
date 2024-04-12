@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Копируем все файлы из текущего каталога в контейнер
+#COPY . .
+
+# Клонируем репозиторий в контейнер
 RUN git clone https://github.com/Koldim2001/get_VECG_web.git .
 
 RUN pip3 install -r requirements.txt
